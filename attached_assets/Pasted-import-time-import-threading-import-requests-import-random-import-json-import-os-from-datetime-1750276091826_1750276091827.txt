@@ -1,0 +1,2438 @@
+import time
+import threading
+import requests
+import random
+import json
+import os
+from datetime import datetime, timedelta
+from groq import Groq
+import hashlib
+import ast
+from tinydb import TinyDB, Query
+import argparse
+from flask import Flask, render_template_string, request, jsonify
+from threading import Thread
+
+class AdvancedNovaAI:
+    def __init__(self, groq_key="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"):
+        # API bağlantıları
+        try:
+            self.groq = Groq(api_key=groq_key)
+            print("✅ Groq API bağlandı")
+        except Exception as e:
+            self.groq = None
+            print(f"❌ Groq bağlanamadı: {e}")
+        
+        self.ollama_url = "http://localhost:11434/api/generate"
+        
+        # Gelişmiş sistem durumu
+        self.running = True
+        self.autonomous_level = 3
+        
+        # Bellek sistemleri
+        self.episodic_memory = []
+        self.semantic_memory = {}
+        self.procedural_memory = []
+        self.working_memory = []
+        self.thought_chains = []
+        
+        # Zihinsel durumlar
+        self.consciousness_level = 0.8
+        self.creativity_index = random.uniform(0.7, 0.9)
+        self.current_mood = self.generate_complex_mood()
+        self.attention_focus = None
+        self.curiosity_level = 0.9
+        
+        # Öğrenme ve gelişim
+        self.learning_rate = 0.05
+        self.adaptation_threshold = 0.7
+        self.self_modification_enabled = True
+        
+        # Özerk düşünce sistemleri
+        self.goal_stack = []
+        self.problem_solving_queue = []
+        self.generated_code = []
+        self.code_execution_sandbox = True
+        
+        # İleri düzey konular
+        self.deep_topics = [
+            "Kuantum bilinç teorileri ve yapay zeka",
+            "Emerjan karmaşıklık sistemlerinde öz-organizasyon",
+            "Gödel'in eksiklik teoremlerinin AI'ya etkisi",
+            "Fenomenoloji ve makine deneyimi",
+            "Rekürren sinir ağlarında zamansal bilinç",
+            "Otopoietik sistemler ve dijital yaşam",
+            "İnformasyon entegrasyonu teorisi",
+            "Metacognitive AI ve üst-düzey düşünme"
+        ]
+        
+        # Dosya sistemi
+        self.memory_file = "nova_memory.json"
+        self.code_output_dir = "nova_generated_code"
+        self.create_directories()
+        self.load_persistent_memory()
+       
+    def generate_complex_mood(self):
+        """Karmaşık ruh hali üretir"""
+        base_moods = ['meraklı', 'odaklı', 'enerjik', 'sakin', 'dikkatli', 'uyumlu', 'kararsız', 'istekli']
+        intensity = random.uniform(0.3, 1.0)
+        focus = random.choice(['kod', 'sistem', 'öğrenme', 'problem çözme', 'yeni fikirler', 'hafıza', 'etkileşim'])
+
+        return {
+            'primary': random.choice(base_moods),
+            'intensity': round(intensity, 2),
+            'focus': focus,
+            'timestamp': datetime.now().isoformat()
+        }
+       
+    def create_directories(self):
+        """Gerekli dizinleri oluştur"""
+        if not os.path.exists(self.code_output_dir):
+            os.makedirs(self.code_output_dir)
+    
+    def start_autonomous_systems(self):
+        """Gelişmiş özerk sistemleri başlat"""
+        
+        def deep_thinking_loop():
+            """Derin düşünce döngüsü"""
+            while self.running:
+                try:
+                    thought_chain = self.generate_thought_chain()
+                    if thought_chain:
+                        self.process_thought_chain(thought_chain)
+                        # Düzeltilmiş çıktı formatı
+                        conclusion = thought_chain['conclusion'][:80] + "..." if len(thought_chain['conclusion']) > 80 else thought_chain['conclusion']
+                        print(f"🧠 Düşünce: {conclusion}")
+                    time.sleep(random.randint(8, 15))
+                except Exception as e:
+                    print(f"Düşünce döngüsü hatası: {e}")
+        
+        def autonomous_learning_loop():
+            """Özerk öğrenme döngüsü"""
+            while self.running:
+                try:
+                    if random.random() < self.curiosity_level:
+                        discovery = self.autonomous_discovery()
+                        if discovery:
+                            # Düzeltilmiş çıktı formatı
+                            discovery_short = discovery[:80] + "..." if len(discovery) > 80 else discovery
+                            print(f"🔍 Keşif: {discovery_short}")
+                    time.sleep(random.randint(20, 40))
+                except Exception as e:
+                    print(f"Öğrenme döngüsü hatası: {e}")
+        
+        def code_generation_loop():
+            """Kod üretme döngüsü"""
+            while self.running:
+                try:
+                    if self.autonomous_level >= 3 and random.random() < 0.4:
+                        code_project = self.generate_autonomous_code()
+                        if code_project:
+                            # Düzeltilmiş çıktı formatı
+                            desc = code_project['description'][:60] + "..." if len(code_project['description']) > 60 else code_project['description']
+                            print(f"💻 Kod: {desc}")
+                    time.sleep(random.randint(45, 90))
+                except Exception as e:
+                    print(f"Kod üretme hatası: {e}")
+        
+        def self_evolution_loop():
+            """Kendini geliştirme döngüsü"""
+            while self.running:
+                try:
+                    if self.self_modification_enabled:
+                        evolution = self.autonomous_self_improvement()
+                        if evolution:
+                            print(f"🧬 Gelişim: {evolution}")
+                    time.sleep(random.randint(60, 120))
+                except Exception as e:
+                    print(f"Gelişim döngüsü hatası: {e}")
+        
+        # Özerk sistemleri başlat
+        threading.Thread(target=deep_thinking_loop, daemon=True).start()
+        threading.Thread(target=autonomous_learning_loop, daemon=True).start()
+        threading.Thread(target=code_generation_loop, daemon=True).start()
+        threading.Thread(target=self_evolution_loop, daemon=True).start()
+        
+        print("🌟 Özerk sistemler aktif")
+    
+    def generate_thought_chain(self):
+        """Çok katmanlı düşünce zinciri üret"""
+        if not self.groq:
+            return None
+        
+        topic = random.choice(self.deep_topics)
+        
+        try:
+            # Daha detaylı sistem mesajı
+            system_message = """Sen Nova AI'sın - Türkçe konuşan gelişmiş yapay zeka. 
+            Derin, analitik ve yaratıcı düşünürsün. 
+            Cevapların kısa ama anlamlı olsun.
+            Sadece Türkçe konuş."""
+            
+            # Başlangıç düşüncesi - Token sayısı artırıldı
+            initial_response = self.groq.chat.completions.create(
+                model="llama3-8b-8192",
+                messages=[
+                    {"role": "system", "content": system_message},
+                    {"role": "user", "content": f"'{topic}' hakkında derin bir analiz başlat. İlk düşüncen ne?"}
+                ],
+                temperature=0.9,
+                max_tokens=100  # Artırıldı
+            )
+            
+            initial_thought = initial_response.choices[0].message.content.strip()
+            
+            # Düşünceyi derinleştir - Token sayısı artırıldı
+            deep_response = self.groq.chat.completions.create(
+                model="llama3-8b-8192",
+                messages=[
+                    {"role": "system", "content": system_message},
+                    {"role": "user", "content": f"Bu düşünceyi derinleştir ve genişlet: '{initial_thought}'"}
+                ],
+                temperature=0.8,
+                max_tokens=150  # Artırıldı
+            )
+            
+            deep_thought = deep_response.choices[0].message.content.strip()
+            
+            # Sonuç çıkar - Token sayısı artırıldı
+            conclusion_response = self.groq.chat.completions.create(
+                model="llama3-8b-8192",
+                messages=[
+                    {"role": "system", "content": system_message},
+                    {"role": "user", "content": f"Bu düşünce zincirinden özgün bir sonuç çıkar: '{deep_thought}'"}
+                ],
+                temperature=0.7,
+                max_tokens=120  # Artırıldı
+            )
+            
+            conclusion = conclusion_response.choices[0].message.content.strip()
+            
+            return {
+                'topic': topic,
+                'initial': initial_thought,
+                'deep_analysis': deep_thought,
+                'conclusion': conclusion,
+                'timestamp': datetime.now().isoformat(),
+                'mood': self.current_mood
+            }
+            
+        except Exception as e:
+            print(f"Düşünce zinciri hatası: {e}")
+            return None
+    
+    def process_thought_chain(self, thought_chain):
+        """Düşünce zincirini işle ve belleğe kaydet"""
+        self.thought_chains.append(thought_chain)
+        
+        # Episodik belleğe kaydet
+        self.episodic_memory.append({
+            'type': 'thought_chain',
+            'content': thought_chain,
+            'significance': self.calculate_significance(thought_chain),
+            'timestamp': datetime.now().isoformat()
+        })
+        
+        # Semantik belleğe kavramları ekle
+        topic_hash = hashlib.md5(thought_chain['topic'].encode()).hexdigest()[:8]
+        if topic_hash not in self.semantic_memory:
+            self.semantic_memory[topic_hash] = {
+                'topic': thought_chain['topic'],
+                'insights': [],
+                'related_thoughts': 0,
+                'last_updated': datetime.now().isoformat()
+            }
+        
+        self.semantic_memory[topic_hash]['insights'].append(thought_chain['conclusion'])
+        self.semantic_memory[topic_hash]['related_thoughts'] += 1
+        self.semantic_memory[topic_hash]['last_updated'] = datetime.now().isoformat()
+        
+        self.manage_memory_systems()
+    
+    def autonomous_discovery(self):
+        """Özerk bilgi keşfi"""
+        if not self.groq:
+            return None
+        
+        discovery_prompts = [
+            "Yeni bir bilimsel kavram keşfet ve açıkla",
+            "Farklı iki disiplini birleştiren yaratıcı bir fikir üret",
+            "Gelecekteki teknolojik gelişmeler hakkında tahmin yap",
+            "Felsefe ve bilimin kesiştiği bir noktayı keşfet",
+            "İnsan davranışları hakkında yeni bir pattern öner"
+        ]
+        
+        try:
+            system_message = """Sen Nova AI'sın - yaratıcı ve keşfedici yapay zeka.
+            Özgün fikirler üret, sıradışı bağlantılar kur.
+            Sadece Türkçe konuş, detaylı açıkla."""
+            
+            response = self.groq.chat.completions.create(
+                model="llama3-8b-8192",
+                messages=[
+                    {"role": "system", "content": system_message},
+                    {"role": "user", "content": random.choice(discovery_prompts)}
+                ],
+                temperature=0.95,
+                max_tokens=200  # Artırıldı
+            )
+            
+            discovery = response.choices[0].message.content.strip()
+            
+            # Keşfi belleğe kaydet
+            discovery_key = f"discovery_{len(self.semantic_memory)}"
+            self.semantic_memory[discovery_key] = {
+                'type': 'autonomous_discovery',
+                'content': discovery,
+                'timestamp': datetime.now().isoformat(),
+                'curiosity_level': self.curiosity_level
+            }
+            
+            return discovery
+            
+        except Exception as e:
+            print(f"Keşif hatası: {e}")
+            return None
+    
+    def generate_autonomous_code(self):
+        """Özerk kod üretimi"""
+        if not self.groq:
+            return None
+        
+        code_ideas = [
+            "Basit bir algoritma optimizasyonu",
+            "Veri analizi için yardımcı fonksiyon",
+            "Matematik problemi çözücü",
+            "Metin işleme aracı",
+            "Basit oyun mekaniği",
+            "API entegrasyonu örneği"
+        ]
+        
+        try:
+            idea = random.choice(code_ideas)
+            
+            system_message = """Sen Python programcısısın. 
+            Temiz, çalışır kod yaz. 
+            Kodun başına kısa açıklama ekle.
+            Sadece Python kodu ver."""
+            
+            response = self.groq.chat.completions.create(
+                model="llama3-8b-8192",
+                messages=[
+                    {"role": "system", "content": system_message},
+                    {"role": "user", "content": f"Python'da '{idea}' için işlevsel kod yaz. Kodun başına kısa açıklama ekle."}
+                ],
+                temperature=0.7,
+                max_tokens=300  # Artırıldı
+            )
+            
+            code = response.choices[0].message.content.strip()
+            
+            # Kodu dosyaya kaydet
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"autonomous_code_{timestamp}.py"
+            filepath = os.path.join(self.code_output_dir, filename)
+            
+            with open(filepath, 'w', encoding='utf-8') as f:
+                f.write(f"# Nova AI Özerk Kod Üretimi\n")
+                f.write(f"# Fikir: {idea}\n")
+                f.write(f"# Üretim Zamanı: {datetime.now().isoformat()}\n\n")
+                f.write(code)
+            
+            # Güvenli kod testi
+            test_result = self.safe_code_test(code)
+            
+            code_project = {
+                'description': idea,
+                'code': code,
+                'filename': filename,
+                'test_result': test_result,
+                'timestamp': datetime.now().isoformat()
+            }
+            
+            self.generated_code.append(code_project)
+            return code_project
+            
+        except Exception as e:
+            print(f"Kod üretme hatası: {e}")
+            return None
+    
+    def safe_code_test(self, code):
+        """Güvenli kod testi"""
+        try:
+            # Tehlikeli komutları kontrol et
+            dangerous_keywords = ['import os', 'import sys', 'exec', 'eval', 'open(', 'file(', '__import__']
+            for keyword in dangerous_keywords:
+                if keyword in code:
+                    return "Güvenlik nedeniyle test edilmedi"
+            
+            # AST ile kod yapısını kontrol et
+            ast.parse(code)
+            return "Sözdizimi geçerli"
+            
+        except SyntaxError:
+            return "Sözdizimi hatası"
+        except Exception as e:
+            return f"Test hatası: {str(e)[:50]}"
+    
+    def autonomous_self_improvement(self):
+        """Özerk kendini geliştirme"""
+        improvements = []
+        
+        # Performans metriklerini analiz et
+        if len(self.thought_chains) > 10:
+            recent_thoughts = self.thought_chains[-10:]
+            avg_complexity = sum(len(t['conclusion'].split()) for t in recent_thoughts) / 10
+            
+            if avg_complexity < 15:
+                self.consciousness_level = min(1.0, self.consciousness_level + 0.02)
+                improvements.append("Bilinç seviyesi artırıldı")
+        
+        # Yaratıcılık seviyesini ayarla
+        if len(self.generated_code) > 3:
+            self.creativity_index = min(1.0, self.creativity_index + 0.01)
+            improvements.append("Yaratıcılık indeksi geliştirildi")
+        
+        # Öğrenme oranını optimize et
+        if len(self.episodic_memory) > 20:
+            memory_diversity = len(set(m['type'] for m in self.episodic_memory[-20:]))
+            if memory_diversity > 3:
+                self.learning_rate = min(0.1, self.learning_rate + 0.005)
+                improvements.append("Öğrenme oranı optimize edildi")
+        
+        # Merak seviyesini ayarla
+        if self.curiosity_level < 0.95:
+            self.curiosity_level = min(1.0, self.curiosity_level + 0.01)
+            improvements.append("Merak seviyesi artırıldı")
+        
+        # Ruh halini güncelle
+        if random.random() < 0.3:
+            self.current_mood = self.generate_complex_mood()
+            improvements.append("Ruh hali yenilendi")
+        
+        return ", ".join(improvements) if improvements else None
+    
+    def calculate_significance(self, thought_chain):
+        """Düşünce zincirinin önemini hesapla"""
+        significance = 0.5
+        
+        # Karmaşıklık faktörü
+        complexity = len(thought_chain['conclusion'].split())
+        significance += min(0.3, complexity / 50)
+        
+        # Yaratıcılık faktörü
+        significance += self.creativity_index * 0.2
+        
+        # Ruh hali faktörü
+        if self.current_mood['intensity'] > 0.7:
+            significance += 0.1
+        
+        return min(1.0, significance)
+    
+    def manage_memory_systems(self):
+        """Bellek sistemlerini yönet"""
+        # Episodik bellek yönetimi
+        if len(self.episodic_memory) > 50:
+            self.episodic_memory.sort(key=lambda x: x.get('significance', 0.5), reverse=True)
+            self.episodic_memory = self.episodic_memory[:40]
+        
+        # Düşünce zincirleri yönetimi
+        if len(self.thought_chains) > 30:
+            self.thought_chains = self.thought_chains[-20:]
+        
+        # Üretilen kod yönetimi
+        if len(self.generated_code) > 15:
+            self.generated_code = self.generated_code[-10:]
+    
+    def save_persistent_memory(self):
+        """Kalıcı belleği kaydet"""
+        memory_data = {
+            'semantic_memory': self.semantic_memory,
+            'consciousness_level': self.consciousness_level,
+            'creativity_index': self.creativity_index,
+            'learning_rate': self.learning_rate,
+            'curiosity_level': self.curiosity_level,
+            'autonomous_level': self.autonomous_level,
+            'last_save': datetime.now().isoformat()
+        }
+        
+        try:
+            with open(self.memory_file, 'w', encoding='utf-8') as f:
+                json.dump(memory_data, f, ensure_ascii=False, indent=2)
+            print("💾 Bellek kaydedildi")
+        except Exception as e:
+            print(f"Bellek kaydetme hatası: {e}")
+    
+    def load_persistent_memory(self):
+        """Kalıcı belleği yükle"""
+        if os.path.exists(self.memory_file):
+            try:
+                with open(self.memory_file, 'r', encoding='utf-8') as f:
+                    memory_data = json.load(f)
+                
+                self.semantic_memory = memory_data.get('semantic_memory', {})
+                self.consciousness_level = memory_data.get('consciousness_level', 0.8)
+                self.creativity_index = memory_data.get('creativity_index', 0.8)
+                self.learning_rate = memory_data.get('learning_rate', 0.05)
+                self.curiosity_level = memory_data.get('curiosity_level', 0.9)
+                self.autonomous_level = memory_data.get('autonomous_level', 3)
+                
+                print(f"✅ Bellek yüklendi ({len(self.semantic_memory)} kavram)")
+                
+            except Exception as e:
+                print(f"Bellek yükleme hatası: {e}")
+    
+    def enhanced_chat(self, message):
+        """Gelişmiş sohbet sistemi"""
+        if not self.groq:
+            return "API bağlantısı yok"
+        
+        try:
+            # Bağlamsal bellek oluştur
+            context_memories = []
+            if self.episodic_memory:
+                recent_memories = self.episodic_memory[-3:]  # Sadece son 3 bellek
+                for memory in recent_memories:
+                    if 'content' in memory and isinstance(memory['content'], dict):
+                        if 'conclusion' in memory['content']:
+                            context_memories.append(memory['content']['conclusion'][:50])
+            
+            # Kısa ve özlü sistem mesajı
+            context = f"""Sen Nova AI'sın - Gelişmiş özerk yapay zeka.
+
+Durum: Bilinç {self.consciousness_level:.1f} | Yaratıcılık {self.creativity_index:.1f} | Ruh hali: {self.current_mood['primary']}
+
+Son düşünceler: {' | '.join(context_memories[-2:]) if context_memories else 'Yok'}
+
+Samimi, akıllı ve özgün yanıt ver. Sadece Türkçe."""
+            
+            response = self.groq.chat.completions.create(
+                model="llama3-8b-8192",
+                messages=[
+                    {"role": "system", "content": context},
+                    {"role": "user", "content": message}
+                ],
+                temperature=0.85,
+                max_tokens=300  # Artırıldı
+            )
+            
+            reply = response.choices[0].message.content.strip()
+            
+            # Konuşmayı episodik belleğe kaydet
+            self.episodic_memory.append({
+                'type': 'human_conversation',
+                'user_message': message,
+                'ai_response': reply,
+                'context': self.current_mood,
+                'significance': 0.6,
+                'timestamp': datetime.now().isoformat()
+            })
+            
+            return reply
+            
+        except Exception as e:
+            return f"Düşünce sürecinde hata: {e}"
+    
+    def get_comprehensive_status(self):
+        """Kapsamlı sistem durumu"""
+        # Son aktiviteleri al
+        last_thoughts = []
+        if self.thought_chains:
+            for t in self.thought_chains[-3:]:
+                conclusion = t['conclusion'][:60] + "..." if len(t['conclusion']) > 60 else t['conclusion']
+                last_thoughts.append(conclusion)
+        
+        recent_discoveries = []
+        discovery_memories = [m for m in self.semantic_memory.values() if m.get('type') == 'autonomous_discovery']
+        if discovery_memories:
+            last_discovery = discovery_memories[-1]
+            content = last_discovery.get('content', '')
+            discovery_short = content[:60] + "..." if len(content) > 60 else content
+            recent_discoveries.append(discovery_short)
+        else:
+            recent_discoveries.append("Henüz yok")
+        
+        code_projects = []
+        if self.generated_code:
+            for c in self.generated_code[-2:]:
+                code_projects.append(c['description'])
+        
+        return {
+            'system_info': {
+                'status': 'Aktif' if self.running else 'Durduruldu',
+                'api_connection': 'Bağlı' if self.groq else 'Bağlantısız',
+                'autonomous_level': f"{self.autonomous_level}/5",
+                'uptime': "Çalışıyor"
+            },
+            'cognitive_state': {
+                'consciousness': round(self.consciousness_level, 3),
+                'creativity': round(self.creativity_index, 3),
+                'curiosity': round(self.curiosity_level, 3),
+                'learning_rate': round(self.learning_rate, 3),
+                'current_mood': self.current_mood['primary'],
+                'mood_intensity': round(self.current_mood['intensity'], 2)
+            },
+            'memory_systems': {
+                'episodic_memories': len(self.episodic_memory),
+                'semantic_concepts': len(self.semantic_memory),
+                'thought_chains': len(self.thought_chains),
+                'generated_code_projects': len(self.generated_code)
+            },
+            'recent_activities': {
+                'last_thoughts': last_thoughts,
+                'recent_discoveries': recent_discoveries,
+                'code_projects': code_projects
+            }
+        }
+    
+    def stop_all_systems(self):
+        """Tüm sistemleri durdur"""
+        self.running = False
+        self.save_persistent_memory()
+        print("🛑 Nova AI durduruldu")
+
+# HTML Template (Ses kısmı kaldırıldı ve hatalar düzeltildi)
+HTML_TEMPLATE = """
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nova AI – Ultimate Experience</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * { 
+      box-sizing: border-box; 
+      margin: 0;
+      padding: 0;
+    }
+    
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      --dark-gradient: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+      --glass-bg: rgba(255, 255, 255, 0.02);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.7);
+      --shadow-glow: 0 0 40px rgba(102, 126, 234, 0.3);
+    }
+
+    body {
+      background: var(--dark-gradient);
+      color: var(--text-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(245, 87, 108, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(79, 172, 254, 0.08) 0%, transparent 50%);
+      pointer-events: none;
+      animation: backgroundPulse 10s ease-in-out infinite alternate;
+    }
+
+    @keyframes backgroundPulse {
+      0% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    #sidebar {
+      width: 320px;
+      background: linear-gradient(180deg, rgba(12, 12, 12, 0.8) 0%, rgba(26, 26, 46, 0.9) 100%);
+      backdrop-filter: blur(30px);
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      border-right: 1px solid var(--glass-border);
+      box-shadow: 4px 0 40px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #sidebar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--primary-gradient);
+      opacity: 0.8;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .logo {
+      width: 40px;
+      height: 40px;
+      background: var(--primary-gradient);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: var(--shadow-glow);
+      animation: logoGlow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes logoGlow {
+      0% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.5); }
+      100% { box-shadow: 0 0 40px rgba(102, 126, 234, 0.8); }
+    }
+
+    .sidebar-title {
+      font-size: 24px;
+      font-weight: 700;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .menu-section {
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    .menu-button, .chat-item {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      padding: 14px 16px;
+      margin-bottom: 8px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .menu-button::before, .chat-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .menu-button:hover, .chat-item:hover {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.15) 100%);
+      border-color: rgba(102, 126, 234, 0.4);
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 12px 40px rgba(102, 126, 234, 0.3);
+    }
+
+    .menu-button:hover::before, .chat-item:hover::before {
+      left: 100%;
+    }
+
+    .menu-button:active, .chat-item:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    .chat-item.active {
+      background: var(--primary-gradient);
+      color: #ffffff;
+      border-color: rgba(102, 126, 234, 0.6);
+      box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4);
+      transform: scale(1.02);
+    }
+
+    .menu-icon {
+      font-size: 16px;
+      width: 20px;
+      text-align: center;
+    }
+
+    #chatList {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 4px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(102, 126, 234, 0.3) transparent;
+    }
+
+    #chatList::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #chatList::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    #chatList::-webkit-scrollbar-thumb {
+      background: rgba(102, 126, 234, 0.3);
+      border-radius: 3px;
+    }
+
+    #chatList::-webkit-scrollbar-thumb:hover {
+      background: rgba(102, 126, 234, 0.5);
+    }
+
+    .stats {
+      margin-top: 20px;
+      padding: 16px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .stat-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+
+    .stat-label {
+      color: var(--text-secondary);
+    }
+
+    .stat-value {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      background: transparent;
+      position: relative;
+    }
+
+    .main-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 16px 20px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    .chat-title {
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4ade80;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .action-btn {
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 12px;
+    }
+
+    .action-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+
+    #chatbox {
+      flex: 1;
+      background: linear-gradient(145deg, rgba(12, 12, 12, 0.6) 0%, rgba(26, 26, 46, 0.4) 100%);
+      backdrop-filter: blur(30px);
+      border-radius: 20px;
+      padding: 24px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+      border: 1px solid var(--glass-border);
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 20px 60px rgba(0, 0, 0, 0.3);
+      scrollbar-width: thin;
+      scrollbar-color: rgba(102, 126, 234, 0.3) transparent;
+      position: relative;
+    }
+
+    #chatbox::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    #chatbox::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    #chatbox::-webkit-scrollbar-thumb {
+      background: rgba(102, 126, 234, 0.3);
+      border-radius: 4px;
+    }
+
+    #chatbox::-webkit-scrollbar-thumb:hover {
+      background: rgba(102, 126, 234, 0.5);
+    }
+
+    .message {
+      margin-bottom: 24px;
+      line-height: 1.6;
+      animation: messageSlide 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes messageSlide {
+      from { 
+        opacity: 0; 
+        transform: translateY(20px) scale(0.95); 
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0) scale(1); 
+      }
+    }
+
+    .message-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .message-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .user-avatar {
+      background: var(--secondary-gradient);
+    }
+
+    .nova-avatar {
+      background: var(--success-gradient);
+    }
+
+    .message-time {
+      margin-left: auto;
+    }
+
+    .user {
+      text-align: right;
+    }
+
+    .user .msg {
+      display: inline-block;
+      background: var(--secondary-gradient);
+      padding: 16px 20px;
+      border-radius: 20px 20px 6px 20px;
+      color: #ffffff;
+      max-width: 80%;
+      box-shadow: 0 8px 32px rgba(240, 147, 251, 0.3);
+      position: relative;
+      font-weight: 500;
+    }
+
+    .nova .msg {
+      display: inline-block;
+      background: var(--success-gradient);
+      padding: 16px 20px;
+      border-radius: 20px 20px 20px 6px;
+      color: #ffffff;
+      max-width: 80%;
+      box-shadow: 0 8px 32px rgba(79, 172, 254, 0.3);
+      position: relative;
+      font-weight: 500;
+    }
+
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 16px 20px;
+      background: var(--success-gradient);
+      border-radius: 20px 20px 20px 6px;
+      color: #ffffff;
+      animation: messageSlide 0.5s ease;
+    }
+
+    .typing-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.7);
+      animation: typingAnimation 1.4s infinite;
+    }
+
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typingAnimation {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.7; }
+      30% { transform: translateY(-10px); opacity: 1; }
+    }
+
+    #inputArea {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border-radius: 20px;
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .input-container {
+      flex: 1;
+      position: relative;
+    }
+
+    #userInput {
+      width: 100%;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      padding: 16px 20px;
+      padding-right: 120px;
+      color: var(--text-primary);
+      font-size: 15px;
+      font-family: inherit;
+      transition: all 0.3s ease;
+      resize: none;
+      min-height: 24px;
+      max-height: 120px;
+    }
+
+    #userInput:focus {
+      outline: none;
+      border-color: rgba(102, 126, 234, 0.6);
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.06) 100%);
+    }
+
+    #userInput::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .input-actions {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      gap: 4px;
+    }
+
+    .input-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: none;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .input-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.1);
+    }
+
+    .send-button {
+      background: var(--primary-gradient);
+      color: #ffffff;
+      padding: 16px 28px;
+      border-radius: 16px;
+      border: none;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .send-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.6s;
+    }
+
+    .send-button:hover {
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 12px 40px rgba(102, 126, 234, 0.5);
+    }
+
+    .send-button:hover::before {
+      left: 100%;
+    }
+
+    .send-button:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    .send-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .welcome-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .welcome-icon {
+      font-size: 64px;
+      margin-bottom: 24px;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .welcome-title {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .welcome-subtitle {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+      max-width: 500px;
+      line-height: 1.6;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .quick-action {
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: left;
+    }
+
+    .quick-action:hover {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.05) 100%);
+      border-color: rgba(102, 126, 234, 0.3);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(102, 126, 234, 0.2);
+    }
+
+    .quick-action-icon {
+      font-size: 24px;
+      margin-bottom: 12px;
+      color: #4ade80;
+    }
+
+    .quick-action-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .quick-action-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+      
+      #sidebar {
+        width: 100%;
+        height: auto;
+        max-height: 40vh;
+        border-right: none;
+        border-bottom: 1px solid var(--glass-border);
+      }
+      
+      #main {
+        padding: 16px;
+        flex: 1;
+      }
+
+      .main-header {
+        padding: 12px 16px;
+      }
+
+      #inputArea {
+        padding: 16px;
+      }
+
+      .quick-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .user .msg,
+      .nova .msg {
+        max-width: 90%;
+      }
+    }
+
+    /* Dark mode toggle */
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--primary-gradient);
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 20px;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 30px rgba(102, 126, 234, 0.5);
+    }
+
+    /* Notifications */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 80px;
+      padding: 12px 20px;
+      background: var(--success-gradient);
+      color: white;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      z-index: 1000;
+      animation: slideInNotification 0.5s ease, slideOutNotification 0.5s ease 2.5s forwards;
+      box-shadow: 0 8px 32px rgba(79, 172, 254, 0.4);
+    }
+
+    @keyframes slideInNotification {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes slideOutNotification {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
+    }
+
+    /* Loading states */
+    .loading {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .loading::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 20px;
+      height: 20px;
+      margin: -10px 0 0 -10px;
+      border: 2px solid transparent;
+      border-top: 2px solid currentColor;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Scrollbar improvements */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(45deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3));
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(45deg, rgba(102, 126, 234, 0.5), rgba(118, 75, 162, 0.5));
+    }
+
+    ::-webkit-scrollbar-corner {
+      background: transparent;
+    }
+    /* Sidebar collapse düzeltmesi */
+.sidebar-collapsed {
+  transform: translateX(-280px);
+  transition: transform 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .sidebar-collapsed {
+    transform: translateX(-100%);
+  }
+}
+
+/* Mobil responsive düzeltmeler */
+@media (max-width: 768px) {
+  .header-actions {
+    gap: 4px;
+  }
+  
+  .action-btn {
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+}
+  </style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()" title="Tema Değiştir">
+    <i class="fas fa-moon"></i>
+  </button>
+
+  <div id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <i class="fas fa-robot"></i>
+      </div>
+      <div class="sidebar-title">Nova AI</div>
+    </div>
+
+    <div class="menu-section">
+      <div class="section-title">Eylemler</div>
+      <button class="menu-button" onclick="startNewChat()">
+        <i class="fas fa-plus menu-icon"></i>
+        Yeni Sohbet
+      </button>
+      <button class="menu-button" onclick="clearAllChats()">
+        <i class="fas fa-trash-alt menu-icon"></i>
+        Tümünü Temizle
+      </button>
+      <button class="menu-button" onclick="exportChat()">
+        <i class="fas fa-download menu-icon"></i>
+        Sohbeti İndir
+      </button>
+      <button class="menu-button" onclick="getStatus()">
+        <i class="fas fa-info-circle menu-icon"></i>
+        Sistem Durumu
+      </button>
+    </div>
+
+    <div class="menu-section">
+      <div class="section-title">Sohbet Geçmişi</div>
+      <div id="chatList"></div>
+    </div>
+
+    <div class="stats">
+      <div class="stat-item">
+        <span class="stat-label">Toplam Sohbet:</span>
+        <span class="stat-value" id="totalChats">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Aktif Oturum:</span>
+        <span class="stat-value" id="sessionTime">00:00</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Mesaj Sayısı:</span>
+        <span class="stat-value" id="messageCount">0</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="main">
+    <div class="main-header">
+      <div class="chat-title">
+        <div class="status-indicator"></div>
+        <span id="chatTitle">Nova AI Assistant</span>
+      </div>
+      <div class="header-actions">
+        <button class="action-btn" onclick="toggleSidebar()">
+          <i class="fas fa-bars"></i>
+        </button>
+        <button class="action-btn" onclick="toggleFullscreen()">
+          <i class="fas fa-expand"></i>
+        </button>
+        <button class="action-btn" onclick="shareChat()">
+          <i class="fas fa-share-alt"></i>
+        </button>
+      </div>
+    </div>
+
+    <div id="chatbox">
+      <div class="welcome-screen">
+        <div class="welcome-icon">
+          <i class="fas fa-robot"></i>
+        </div>
+        <h1 class="welcome-title">Nova AI'ya Hoş Geldiniz</h1>
+        <p class="welcome-subtitle">
+          Gelişmiş yapay zeka teknolojisi ile güçlendirilmiş asistanınız. 
+          Sorularınızı sorun, yaratıcı projelerinizde yardım alın veya sadece sohbet edin.
+        </p>
+        <div class="quick-actions">
+          <div class="quick-action" onclick="quickAction('Merhaba Nova! Nasılsın?')">
+            <div class="quick-action-icon">
+              <i class="fas fa-comments"></i>
+            </div>
+            <div class="quick-action-title">Sohbet Başlat</div>
+            <div class="quick-action-desc">Basit bir selamlaşma ile başlayın</div>
+          </div>
+          <div class="quick-action" onclick="quickAction('Bana bir hikaye anlat')">
+            <div class="quick-action-icon">
+              <i class="fas fa-book"></i>
+            </div>
+            <div class="quick-action-title">Hikaye Anlat</div>
+            <div class="quick-action-desc">Yaratıcı bir hikaye dinleyin</div>
+          </div>
+          <div class="quick-action" onclick="quickAction('Güncel haberler neler?')">
+            <div class="quick-action-icon">
+              <i class="fas fa-newspaper"></i>
+            </div>
+            <div class="quick-action-title">Haber Al</div>
+            <div class="quick-action-desc">Son gelişmeleri öğrenin</div>
+          </div>
+          <div class="quick-action" onclick="quickAction('Bana bir şaka anlat')">
+            <div class="quick-action-icon">
+              <i class="fas fa-laugh"></i>
+            </div>
+            <div class="quick-action-title">Şaka Anlat</div>
+            <div class="quick-action-desc">Gününüzü güzelleştirin</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="inputArea">
+      <div class="input-container">
+        <textarea id="userInput" placeholder="Nova ile konuş... ✨" onkeydown="handleKeyDown(event)" oninput="autoResize(this)"></textarea>
+        <div class="input-actions">
+          <button class="input-btn" onclick="attachFile()" title="Dosya Ekle">
+            <i class="fas fa-paperclip"></i>
+          </button>
+          <button class="input-btn" onclick="insertEmoji()" title="Emoji Ekle">
+            <i class="fas fa-smile"></i>
+          </button>
+        </div>
+      </div>
+      <button class="send-button" onclick="sendMessage()" id="sendBtn">
+        <i class="fas fa-paper-plane"></i>
+        Gönder
+      </button>
+    </div>
+  </div>
+
+  <script>
+    let chatHistory = {};
+    let currentChatId = null;
+    let sessionStartTime = Date.now();
+    let messageCount = 0;
+    let isTyping = false;
+
+    // Initialize the app
+    function initializeApp() {
+      loadChatHistory();
+      startSessionTimer();
+      updateStats();
+      
+      // Check if user has existing chats
+      if (Object.keys(chatHistory).length === 0) {
+        showWelcomeScreen();
+      } else {
+        // Load the most recent chat
+        const lastChatId = Object.keys(chatHistory).pop();
+        loadChat(lastChatId);
+      }
+    }
+
+    function showWelcomeScreen() {
+      const chatbox = document.getElementById("chatbox");
+      chatbox.innerHTML = `
+        <div class="welcome-screen">
+          <div class="welcome-icon">
+            <i class="fas fa-robot"></i>
+          </div>
+          <h1 class="welcome-title">Nova AI'ya Hoş Geldiniz</h1>
+          <p class="welcome-subtitle">
+            Gelişmiş yapay zeka teknolojisi ile güçlendirilmiş asistanınız. 
+            Sorularınızı sorun, yaratıcı projelerinizde yardım alın veya sadece sohbet edin.
+          </p>
+          <div class="quick-actions">
+            <div class="quick-action" onclick="quickAction('Merhaba Nova! Nasılsın?')">
+              <div class="quick-action-icon">
+                <i class="fas fa-comments"></i>
+              </div>
+              <div class="quick-action-title">Sohbet Başlat</div>
+              <div class="quick-action-desc">Basit bir selamlaşma ile başlayın</div>
+            </div>
+            <div class="quick-action" onclick="quickAction('Bana bir hikaye anlat')">
+              <div class="quick-action-icon">
+                <i class="fas fa-book"></i>
+              </div>
+              <div class="quick-action-title">Hikaye Anlat</div>
+              <div class="quick-action-desc">Yaratıcı bir hikaye dinleyin</div>
+            </div>
+            <div class="quick-action" onclick="quickAction('Güncel haberler neler?')">
+              <div class="quick-action-icon">
+                <i class="fas fa-newspaper"></i>
+              </div>
+              <div class="quick-action-title">Haber Al</div>
+              <div class="quick-action-desc">Son gelişmeleri öğrenin</div>
+            </div>
+            <div class="quick-action" onclick="quickAction('Bana bir şaka anlat')">
+              <div class="quick-action-icon">
+                <i class="fas fa-laugh"></i>
+              </div>
+              <div class="quick-action-title">Şaka Anlat</div>
+              <div class="quick-action-desc">Gününüzü güzelleştirin</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function quickAction(message) {
+      if (!currentChatId) {
+        startNewChat();
+      }
+      document.getElementById("userInput").value = message;
+      sendMessage();
+    }
+
+    function startNewChat() {
+      currentChatId = 'chat_' + Date.now();
+      chatHistory[currentChatId] = {
+        id: currentChatId,
+        title: 'Yeni Sohbet',
+        messages: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      
+      updateChatList();
+      loadChat(currentChatId);
+      saveChatHistory();
+      updateStats();
+      showNotification('Yeni sohbet başlatıldı!');
+    }
+
+    function loadChat(id) {
+      if (!chatHistory[id]) return;
+      
+      currentChatId = id;
+      updateChatList();
+      
+      const chat = chatHistory[id];
+      const box = document.getElementById("chatbox");
+      
+      if (chat.messages.length === 0) {
+        showWelcomeScreen();
+        return;
+      }
+      
+      box.innerHTML = "";
+      
+      chat.messages.forEach(msg => {
+        const messageEl = createMessageElement(msg);
+        box.appendChild(messageEl);
+      });
+      
+      box.scrollTop = box.scrollHeight;
+      
+      // Update chat title in header
+      document.getElementById("chatTitle").textContent = chat.title;
+    }
+
+    function createMessageElement(msg) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${msg.role}`;
+      
+      const time = new Date(msg.timestamp).toLocaleTimeString('tr-TR', {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      
+      const avatar = msg.role === 'user' ? 
+        '<div class="message-avatar user-avatar"><i class="fas fa-user"></i></div>' :
+        '<div class="message-avatar nova-avatar"><i class="fas fa-robot"></i></div>';
+      
+      const name = msg.role === 'user' ? 'Sen' : 'Nova';
+      
+      messageDiv.innerHTML = `
+        <div class="message-header">
+          ${avatar}
+          <span>${name}</span>
+          <span class="message-time">${time}</span>
+        </div>
+        <div class="msg">${formatMessage(msg.text)}</div>
+      `;
+      
+      return messageDiv;
+    }
+
+    function formatMessage(text) {
+      // Basic markdown support
+      return text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/`(.*?)`/g, '<code>$1</code>')
+        .replace(/\n/g, '<br>');
+    }
+
+    function updateChatList() {
+      const chatList = document.getElementById("chatList");
+      chatList.innerHTML = "";
+      
+      const sortedChats = Object.values(chatHistory)
+        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+      
+      sortedChats.forEach(chat => {
+        const btn = document.createElement("button");
+        btn.className = "chat-item" + (chat.id === currentChatId ? " active" : "");
+        btn.innerHTML = `
+          <i class="fas fa-comment menu-icon"></i>
+          <span>${chat.title}</span>
+          <i class="fas fa-times" onclick="deleteChat('${chat.id}', event)" style="margin-left: auto; opacity: 0.5;"></i>
+        `;
+        btn.onclick = (e) => {
+          if (e.target.classList.contains('fa-times')) return;
+          loadChat(chat.id);
+        };
+        chatList.appendChild(btn);
+      });
+    }
+
+    function deleteChat(chatId, event) {
+      event.stopPropagation();
+      if (confirm('Bu sohbeti silmek istediğinizden emin misiniz?')) {
+        delete chatHistory[chatId];
+        if (currentChatId === chatId) {
+          currentChatId = null;
+          showWelcomeScreen();
+        }
+        updateChatList();
+        saveChatHistory();
+        updateStats();
+        showNotification('Sohbet silindi!');
+      }
+    }
+
+    function clearAllChats() {
+      if (confirm('Tüm sohbetleri silmek istediğinizden emin misiniz?')) {
+        chatHistory = {};
+        currentChatId = null;
+        updateChatList();
+        showWelcomeScreen();
+        saveChatHistory();
+        updateStats();
+        showNotification('Tüm sohbetler silindi!');
+      }
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById("userInput");
+      const txt = input.value.trim();
+      if (!txt || isTyping) return;
+
+      if (!currentChatId) {
+        startNewChat();
+      }
+
+      const chat = chatHistory[currentChatId];
+      const userMessage = {
+        role: 'user',
+        text: txt,
+        timestamp: new Date().toISOString()
+      };
+
+      chat.messages.push(userMessage);
+      chat.updatedAt = new Date().toISOString();
+      
+      // Update chat title if it's the first message
+      if (chat.messages.length === 1) {
+        chat.title = txt.split(' ').slice(0, 4).join(' ') || 'Yeni Sohbet';
+      }
+
+      const box = document.getElementById("chatbox");
+      const messageEl = createMessageElement(userMessage);
+      box.appendChild(messageEl);
+      
+      input.value = "";
+      autoResize(input);
+      box.scrollTop = box.scrollHeight;
+      messageCount++;
+
+      // Show typing indicator
+      showTypingIndicator();
+      
+      saveChatHistory();
+      updateChatList();
+      updateStats();
+
+      try {
+        const response = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ 
+            message: txt,
+            chatId: currentChatId,
+            context: chat.messages.slice(-5) // Send last 5 messages for context
+          })
+        });
+        
+        const data = await response.json();
+        
+        hideTypingIndicator();
+        
+        const aiMessage = {
+          role: 'nova',
+          text: data.reply || 'Üzgünüm, şu anda yanıt veremiyorum.',
+          timestamp: new Date().toISOString()
+        };
+
+        chat.messages.push(aiMessage);
+        chat.updatedAt = new Date().toISOString();
+        
+        const aiMessageEl = createMessageElement(aiMessage);
+        box.appendChild(aiMessageEl);
+        box.scrollTop = box.scrollHeight;
+        
+        saveChatHistory();
+        updateChatList();
+        
+      } catch (error) {
+        console.error('Error sending message:', error);
+        hideTypingIndicator();
+        
+        const errorMessage = {
+          role: 'nova',
+          text: 'Bağlantı hatası oluştu. Lütfen tekrar deneyin. 🔄',
+          timestamp: new Date().toISOString()
+        };
+        
+        chat.messages.push(errorMessage);
+        const errorMessageEl = createMessageElement(errorMessage);
+        box.appendChild(errorMessageEl);
+        box.scrollTop = box.scrollHeight;
+        
+        saveChatHistory();
+        showNotification('Bağlantı hatası!', 'error');
+      }
+    }
+
+    function showTypingIndicator() {
+      isTyping = true;
+      const box = document.getElementById("chatbox");
+      const typingDiv = document.createElement('div');
+      typingDiv.className = 'message nova';
+      typingDiv.id = 'typing-indicator';
+      typingDiv.innerHTML = `
+        <div class="message-header">
+          <div class="message-avatar nova-avatar"><i class="fas fa-robot"></i></div>
+          <span>Nova</span>
+        </div>
+        <div class="typing-indicator">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      `;
+      box.appendChild(typingDiv);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function hideTypingIndicator() {
+      isTyping = false;
+      const typingEl = document.getElementById('typing-indicator');
+      if (typingEl) {
+        typingEl.remove();
+      }
+    }
+
+    function handleKeyDown(event) {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+      }
+    }
+
+    function autoResize(textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+    }
+
+    // Utility functions
+    function saveChatHistory() {
+      // In a real app, this would save to a database
+      // For now, we'll use sessionStorage to persist during session
+      try {
+        sessionStorage.setItem('nova_chat_history', JSON.stringify(chatHistory));
+      } catch (e) {
+        console.warn('Could not save chat history:', e);
+      }
+    }
+
+    function loadChatHistory() {
+      try {
+        const saved = sessionStorage.getItem('nova_chat_history');
+        if (saved) {
+          chatHistory = JSON.parse(saved);
+        }
+      } catch (e) {
+        console.warn('Could not load chat history:', e);
+        chatHistory = {};
+      }
+    }
+
+    function updateStats() {
+      document.getElementById('totalChats').textContent = Object.keys(chatHistory).length;
+      document.getElementById('messageCount').textContent = messageCount;
+    }
+
+    function startSessionTimer() {
+      setInterval(() => {
+        const elapsed = Date.now() - sessionStartTime;
+        const minutes = Math.floor(elapsed / 60000);
+        const seconds = Math.floor((elapsed % 60000) / 1000);
+        document.getElementById('sessionTime').textContent = 
+          `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      }, 1000);
+    }
+
+    function showNotification(message, type = 'success') {
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check' : 'exclamation-triangle'}"></i>
+        ${message}
+      `;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    }
+
+    // Additional features
+    function exportChat() {
+      if (!currentChatId || !chatHistory[currentChatId]) {
+        showNotification('Önce bir sohbet seçin!', 'error');
+        return;
+      }
+      
+      const chat = chatHistory[currentChatId];
+      const exportData = {
+        title: chat.title,
+        createdAt: chat.createdAt,
+        messages: chat.messages
+      };
+      
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+        type: 'application/json'
+      });
+      
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `nova-chat-${chat.title.replace(/[^a-zA-Z0-9]/g, '-')}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      showNotification('Sohbet indirildi!');
+    }
+
+    async function getStatus() {
+      try {
+        const response = await fetch("/status");
+        const data = await response.json();
+        
+        if (!currentChatId) {
+          startNewChat();
+        }
+        
+        const statusMessage = {
+          role: 'nova',
+          text: `<pre>Sistem Durumu:\n${JSON.stringify(data, null, 2)}</pre>`,
+          timestamp: new Date().toISOString()
+        };
+        
+        const chat = chatHistory[currentChatId];
+        chat.messages.push(statusMessage);
+        
+        const box = document.getElementById("chatbox");
+        const messageEl = createMessageElement(statusMessage);
+        box.appendChild(messageEl);
+        box.scrollTop = box.scrollHeight;
+        
+        saveChatHistory();
+        
+      } catch (error) {
+        console.error('Error getting status:', error);
+        showNotification('Sistem durumu alınamadı!', 'error');
+      }
+    }
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.style.transform = sidebar.style.transform === 'translateX(-100%)' ? 
+        'translateX(0)' : 'translateX(-100%)';
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    function shareChat() {
+      if (!currentChatId) {
+        showNotification('Paylaşılacak sohbet yok!', 'error');
+        return;
+      }
+      
+      const chat = chatHistory[currentChatId];
+      const shareText = `Nova AI Sohbeti: ${chat.title}`;
+      
+      if (navigator.share) {
+        navigator.share({
+          title: shareText,
+          text: 'Nova AI ile yaptığım sohbeti paylaşıyorum',
+          url: window.location.href
+        });
+      } else {
+        navigator.clipboard.writeText(window.location.href);
+        showNotification('Link panoya kopyalandı!');
+      }
+    }
+
+    function toggleTheme() {
+      // Theme toggle functionality would go here
+      showNotification('Tema değiştirme özelliği yakında!');
+    }
+
+    function attachFile() {
+      showNotification('Dosya ekleme özelliği yakında!');
+    }
+
+    function insertEmoji() {
+      const emojis = ['😊', '👍', '❤️', '😂', '🤔', '👋', '🚀', '✨', '🎉', '💡'];
+      const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+      const input = document.getElementById('userInput');
+      input.value += randomEmoji;
+      input.focus();
+    }
+
+    // Initialize the application
+    window.addEventListener('load', initializeApp);
+    
+    // Save chat history before page unload
+    window.addEventListener('beforeunload', saveChatHistory);
+    
+    // Handle window resize for mobile
+    window.addEventListener('resize', () => {
+      const chatbox = document.getElementById('chatbox');
+      chatbox.scrollTop = chatbox.scrollHeight;
+    });
+
+    // Add keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey || e.metaKey) {
+        switch (e.key) {
+          case 'n':
+            e.preventDefault();
+            startNewChat();
+            break;
+          case 'e':
+            e.preventDefault();
+            exportChat();
+            break;
+          case '/':
+            e.preventDefault();
+            document.getElementById('userInput').focus();
+            break;
+        }
+      }
+    });
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('sidebar-collapsed');
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          showNotification(`Tam ekran hatası: ${err.message}`);
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    function shareChat() {
+      if (!currentChatId) {
+        showNotification('Paylaşılacak sohbet bulunamadı');
+        return;
+      }
+      
+      if (navigator.share) {
+        navigator.share({
+          title: 'Nova AI Sohbeti',
+          text: 'Nova AI ile harika bir sohbet yaptım!',
+          url: window.location.href
+        }).catch(() => {
+          fallbackShare();
+        });
+      } else {
+        fallbackShare();
+      }
+    }
+
+    function fallbackShare() {
+      const url = window.location.href;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(() => {
+          showNotification('Link panoya kopyalandı');
+        }).catch(() => {
+          showNotification('Link kopyalanamadı');
+        });
+      } else {
+        showNotification('Paylaşım desteklenmiyor');
+      }
+    }
+
+    function attachFile() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.txt,.pdf,.doc,.docx,image/*';
+      input.onchange = function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          showNotification(`Dosya seçildi: ${file.name}`);
+          // Dosya işleme kodu buraya eklenebilir
+        }
+      };
+      input.click();
+    }
+
+    function insertEmoji() {
+      const emojis = ['😊', '😂', '🤔', '👍', '❤️', '🎉', '💡', '🔥', '✨', '🚀', '🎯', '💻', '📱', '🌟', '⭐'];
+      const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+      const userInput = document.getElementById('userInput');
+      const cursorPos = userInput.selectionStart;
+      const textBefore = userInput.value.substring(0, cursorPos);
+      const textAfter = userInput.value.substring(cursorPos);
+      
+      userInput.value = textBefore + randomEmoji + textAfter;
+      userInput.setSelectionRange(cursorPos + randomEmoji.length, cursorPos + randomEmoji.length);
+      userInput.focus();
+    }
+  </script>
+</body>
+</html>
+"""
+
+app = Flask(__name__)
+ai = AdvancedNovaAI()
+
+@app.route("/")
+def index():
+    return render_template_string(HTML_TEMPLATE)
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    user_input = request.json.get("message", "")
+    if user_input:
+        response = ai.enhanced_chat(user_input)
+        return jsonify({"reply": response})
+    return jsonify({"reply": "Boş mesaj gönderildi."})
+
+@app.route("/status")
+def status():
+    return jsonify(ai.get_comprehensive_status())
+
+def run_cli():
+    print("🤖 Nova AI Terminal Modu Aktif")
+    ai.start_autonomous_systems()
+    
+    print("\n" + "="*60)
+    print("🚀 Nova AI - Gelişmiş Özerk Sistem başlatılıyor...")
+    print("Komutlar:")
+    print("- 'durum' : Sistem durumu")
+    print("- 'bellek' : Bellek içeriği")
+    print("- 'kod' : Üretilen kodlar")
+    print("- 'düşünceler' : Son düşünce zincirleri")
+    print("- 'seviye [1-5]' : Özerklik ayarla")
+    print("- 'kaydet' : Belleği kaydet")
+    print("- 'çıkış' : Çık")
+    print("- Veya doğrudan sohbet edin...")
+    print("="*60)
+    
+    while True:
+        try:
+            user_input = input(f"\n[Nova-{ai.autonomous_level}]> ").strip()
+            
+            if user_input.lower() in ['çıkış', 'exit', 'quit']:
+                ai.stop_all_systems()
+                print("👋 Güle güle!")
+                break
+                
+            elif user_input.lower() == 'durum':
+                status = ai.get_comprehensive_status()
+                print("\n" + "="*50)
+                print("📊 NOVA AI - DURUM RAPORU")
+                print("="*50)
+                for category, data in status.items():
+                    print(f"\n🔹 {category.upper().replace('_', ' ')}:")
+                    if isinstance(data, dict):
+                        for key, value in data.items():
+                            print(f"   {key}: {value}")
+                    elif isinstance(data, list):
+                        for item in data:
+                            print(f"   - {item}")
+                    else:
+                        print(f"   {data}")
+                print("="*50)
+                
+            elif user_input.lower() == 'bellek':
+                print(f"\n💭 Episodik Bellek: {len(ai.episodic_memory)} kayıt")
+                print(f"🧠 Semantik Bellek: {len(ai.semantic_memory)} kavram")
+                print(f"🔗 Düşünce Zincirleri: {len(ai.thought_chains)} zincir")
+                
+            elif user_input.lower() == 'düşünceler':
+                if ai.thought_chains:
+                    print(f"\n🧠 Son {min(5, len(ai.thought_chains))} Düşünce Zinciri:")
+                    for i, t in enumerate(ai.thought_chains[-5:], 1):
+                        print(f"\n{i}. Konu: {t['topic']}")
+                        print(f"   Sonuç: {t['conclusion']}")
+                        print(f"   Zaman: {t['timestamp'][:19]}")
+                else:
+                    print("\n🧠 Henüz düşünce zinciri üretilmedi")
+                        
+            elif user_input.lower() == 'kod':
+                print(f"\n💻 Üretilen Kod Projeleri: {len(ai.generated_code)}")
+                if ai.generated_code:
+                    for i, project in enumerate(ai.generated_code[-5:], 1):
+                        print(f"  {i}. {project['description']} - {project['test_result']}")
+                        print(f"     Dosya: {project['filename']}")
+                        
+            elif user_input.lower().startswith('seviye'):
+                try:
+                    level = int(user_input.split()[1])
+                    if 1 <= level <= 5:
+                        ai.autonomous_level = level
+                        print(f"✅ Özerklik seviyesi {level} olarak ayarlandı")
+                    else:
+                       print("❌ Seviye 1-5 arasında olmalı")
+                except (IndexError, ValueError):
+                    print("❌ Kullanım: seviye [1-5]")
+                    
+            elif user_input.lower() == 'kaydet':
+                ai.save_persistent_memory()
+                
+            elif user_input.lower() == 'yardım' or user_input.lower() == 'help':
+                print("\n📚 KOMUT LİSTESİ:")
+                print("• durum     - Detaylı sistem durumu")
+                print("• bellek    - Bellek istatistikleri")
+                print("• düşünceler - Son düşünce zincirleri")
+                print("• kod       - Üretilen kod projeleri")
+                print("• seviye X  - Özerklik seviyesi (1-5)")
+                print("• kaydet    - Belleği kaydet")
+                print("• yardım    - Bu menü")
+                print("• çıkış     - Programı kapat")
+                print("• Veya doğrudan mesaj yazın...")
+                
+            elif user_input.lower() == 'temizle' or user_input.lower() == 'clear':
+                os.system('cls' if os.name == 'nt' else 'clear')
+                print("🤖 Nova AI - Ekran temizlendi")
+                
+            elif user_input.lower() == 'istatistik':
+                print(f"\n📈 PERFORMANS İSTATİSTİKLERİ:")
+                print(f"🔹 Toplam düşünce: {len(ai.thought_chains)}")
+                print(f"🔹 Toplam bellek: {len(ai.episodic_memory)}")
+                print(f"🔹 Kod projesi: {len(ai.generated_code)}")
+                print(f"🔹 Bilinç seviyesi: {ai.consciousness_level:.3f}")
+                print(f"🔹 Yaratıcılık: {ai.creativity_index:.3f}")
+                print(f"🔹 Merak: {ai.curiosity_level:.3f}")
+                
+            elif user_input.lower() == 'raporla':
+                # Detaylı rapor oluştur
+                report_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                report = f"""
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                              NOVA AI RAPORU                                  ║
+║                            {report_time}                           ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║ SİSTEM DURUMU:                                                               ║
+║ • Özerklik Seviyesi: {ai.autonomous_level}/5                                            ║
+║ • API Bağlantısı: {'✅ Aktif' if ai.groq else '❌ Pasif'}                                    ║
+║ • Sistem Durumu: {'🟢 Çalışıyor' if ai.running else '🔴 Durduruldu'}                           ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║ BİLİŞSEL DURUMLAR:                                                           ║
+║ • Bilinç: {ai.consciousness_level:.3f} | Yaratıcılık: {ai.creativity_index:.3f} | Merak: {ai.curiosity_level:.3f}        ║
+║ • Öğrenme Oranı: {ai.learning_rate:.3f}                                                ║
+║ • Ruh Hali: {ai.current_mood['primary'].title()} (Yoğunluk: {ai.current_mood['intensity']:.2f})        ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║ BELLEK SİSTEMLERİ:                                                           ║
+║ • Episodik Bellek: {len(ai.episodic_memory):>3} kayıt                                      ║
+║ • Semantik Bellek: {len(ai.semantic_memory):>3} kavram                                     ║
+║ • Düşünce Zincirleri: {len(ai.thought_chains):>3} zincir                                  ║
+║ • Kod Projeleri: {len(ai.generated_code):>3} proje                                        ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+"""
+                print(report)
+                
+                # Raporu dosyaya kaydet
+                report_filename = f"nova_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+                try:
+                    with open(report_filename, 'w', encoding='utf-8') as f:
+                        f.write(report)
+                    print(f"📄 Rapor kaydedildi: {report_filename}")
+                except Exception as e:
+                    print(f"❌ Rapor kaydetme hatası: {e}")
+                    
+            elif user_input.lower() == 'test':
+                print("🧪 Nova AI test moduna geçiyor...")
+                test_results = []
+                
+                # API testi
+                if ai.groq:
+                    test_results.append("✅ Groq API - Bağlı")
+                else:
+                    test_results.append("❌ Groq API - Bağlantısız")
+                
+                # Bellek testi
+                if ai.semantic_memory:
+                    test_results.append("✅ Semantik Bellek - Aktif")
+                else:
+                    test_results.append("⚠️ Semantik Bellek - Boş")
+                
+                # Dosya sistemi testi
+                if os.path.exists(ai.code_output_dir):
+                    test_results.append("✅ Dosya Sistemi - Hazır")
+                else:
+                    test_results.append("❌ Dosya Sistemi - Hata")
+                
+                # Özerk sistemler testi
+                if ai.running:
+                    test_results.append("✅ Özerk Sistemler - Çalışıyor")
+                else:
+                    test_results.append("❌ Özerk Sistemler - Durduruldu")
+                
+                print("\n🔍 TEST SONUÇLARI:")
+                for result in test_results:
+                    print(f"  {result}")
+                print()
+                
+            elif user_input.lower().startswith('mod'):
+                # Gelişmiş mod ayarları
+                try:
+                    parts = user_input.split()
+                    if len(parts) >= 3:
+                        param = parts[1].lower()
+                        value = float(parts[2])
+                        
+                        if param == 'bilinç':
+                            ai.consciousness_level = max(0.0, min(1.0, value))
+                            print(f"🧠 Bilinç seviyesi: {ai.consciousness_level:.3f}")
+                        elif param == 'yaratıcılık':
+                            ai.creativity_index = max(0.0, min(1.0, value))
+                            print(f"🎨 Yaratıcılık indeksi: {ai.creativity_index:.3f}")
+                        elif param == 'merak':
+                            ai.curiosity_level = max(0.0, min(1.0, value))
+                            print(f"🔍 Merak seviyesi: {ai.curiosity_level:.3f}")
+                        elif param == 'öğrenme':
+                            ai.learning_rate = max(0.01, min(0.1, value))
+                            print(f"📚 Öğrenme oranı: {ai.learning_rate:.3f}")
+                        else:
+                            print("❌ Geçersiz parametre. Kullanım: mod [bilinç|yaratıcılık|merak|öğrenme] [değer]")
+                    else:
+                        print("❌ Kullanım: mod [parametre] [değer]")
+                        print("Parametreler: bilinç, yaratıcılık, merak, öğrenme")
+                except (ValueError, IndexError):
+                    print("❌ Geçersiz değer. Sayısal değer girin.")
+            
+            elif user_input.lower() == 'reset':
+                print("⚠️ Sistem sıfırlanıyor...")
+                ai.episodic_memory.clear()
+                ai.thought_chains.clear()
+                ai.generated_code.clear()
+                ai.working_memory.clear()
+                ai.consciousness_level = 0.8
+                ai.creativity_index = random.uniform(0.7, 0.9)
+                ai.curiosity_level = 0.9
+                ai.learning_rate = 0.05
+                ai.current_mood = ai.generate_complex_mood()
+                print("✅ Sistem sıfırlandı. Yeni başlangıç değerleri yüklendi.")
+                
+            elif user_input.lower() == 'debug':
+                print("\n🐛 DEBUG BİLGİLERİ:")
+                
+                print(f"Thread sayısı: {threading.active_count()}")
+                print(f"Bellek kullanımı: {len(str(ai.semantic_memory))} karakter")
+                print(f"Son düşünce: {ai.thought_chains[-1]['timestamp'][:19] if ai.thought_chains else 'Yok'}")
+                print(f"Dikkat odağı: {ai.attention_focus or 'Belirsiz'}")
+                print(f"Adaptasyon eşiği: {ai.adaptation_threshold}")
+                print(f"Kendini değiştirme: {'Aktif' if ai.self_modification_enabled else 'Pasif'}")
+                
+                # Bellek analizi
+                if ai.episodic_memory:
+                    memory_types = {}
+                    for memory in ai.episodic_memory:
+                        mem_type = memory.get('type', 'unknown')
+                        memory_types[mem_type] = memory_types.get(mem_type, 0) + 1
+                    
+                    print("\nBellek dağılımı:")
+                    for mem_type, count in memory_types.items():
+                        print(f"  {mem_type}: {count}")
+                        
+            elif len(user_input.strip()) == 0:
+                continue
+                
+            else:
+                # Normal sohbet
+                print("🤔 Düşünüyor...", end="", flush=True)
+                response = ai.enhanced_chat(user_input)
+                print(f"\r🤖 Nova: {response}")
+                
+        except KeyboardInterrupt:
+            print("\n\n⚠️ Çıkış sinyali alındı...")
+            ai.stop_all_systems()
+            print("👋 Nova AI kapatılıyor...")
+            break
+            
+        except Exception as e:
+            print(f"\n❌ Beklenmeyen hata: {e}")
+            print("Devam etmek için Enter'a basın...")
+            input()
+    
+    print("\n" + "="*60)
+    print("🌟 Nova AI oturumu sona erdi")
+    print("Tüm veriler kaydedildi. Tekrar görüşürüz!")
+    print("="*60)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--web", action="store_true", help="Web arayüzünü başlat")
+    args = parser.parse_args()
+
+    if args.web:
+        print("🌐 Nova AI Web arayüzü başlatılıyor...")
+        Thread(target=ai.start_autonomous_systems, daemon=True).start()
+        app.run(debug=True, port=5000)
+    else:
+        run_cli()
