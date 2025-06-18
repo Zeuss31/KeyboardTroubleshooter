@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="tr" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova AI Chat</title>
+    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-brain me-2"></i>Nova AI
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/">
+                    <i class="fas fa-home me-1"></i>Ana Sayfa
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid chat-container">
+        <div class="row h-100">
+            <div class="col-md-8 col-lg-9 d-flex flex-column chat-main">
+                <div class="chat-header p-3 border-bottom">
+                    <h4 class="mb-0">
+                        <i class="fas fa-robot me-2"></i>Nova AI
+                        <small class="text-muted ms-2" id="ai-status">Bağlanıyor...</small>
+                    </h4>
+                    <small class="text-muted" id="ai-mood">Ruh hali yükleniyor...</small>
+                </div>
+                
+                <div class="chat-messages flex-grow-1 p-3" id="chat-messages">
+                    <div class="message ai-message">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <strong>Nova AI</strong>
+                            <p>Merhaba! Ben Nova AI. Sizinle konuşmaya hazırım. Sorularınızı sorabilir, düşüncelerinizi paylaşabilirsiniz.</p>
+                            <small class="text-muted">Şimdi</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-input p-3 border-top">
+                    <form id="chat-form" class="d-flex gap-2">
+                        <input type="text" class="form-control" id="message-input" 
+                               placeholder="Mesajınızı yazın..." autocomplete="off">
+                        <button type="submit" class="btn btn-primary" id="send-btn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            <kbd>Enter</kbd> ile mesaj gönder, <kbd>Shift + Enter</kbd> ile yeni satır
+                        </small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 col-lg-3 chat-sidebar border-start">
+                <div class="p-3">
+                    <h6 class="mb-3">
+                        <i class="fas fa-info-circle me-2"></i>AI Durumu
+                    </h6>
+                    <div class="ai-stats">
+                        <div class="stat-item mb-2">
+                            <small class="text-muted">Bilinç:</small>
+                            <span class="ms-2" id="sidebar-consciousness">--</span>
+                        </div>
+                        <div class="stat-item mb-2">
+                            <small class="text-muted">Yaratıcılık:</small>
+                            <span class="ms-2" id="sidebar-creativity">--</span>
+                        </div>
+                        <div class="stat-item mb-2">
+                            <small class="text-muted">Merak:</small>
+                            <span class="ms-2" id="sidebar-curiosity">--</span>
+                        </div>
+                        <div class="stat-item mb-3">
+                            <small class="text-muted">Odak:</small>
+                            <span class="ms-2" id="sidebar-focus">--</span>
+                        </div>
+                    </div>
+                    
+                    <h6 class="mb-3">
+                        <i class="fas fa-memory me-2"></i>Son Düşünceler
+                    </h6>
+                    <div id="recent-thoughts" class="recent-thoughts">
+                        <p class="text-muted small">Düşünceler yükleniyor...</p>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h6 class="mb-3">
+                            <i class="fas fa-keyboard me-2"></i>Kısayollar
+                        </h6>
+                        <div class="shortcuts">
+                            <div class="mb-2">
+                                <kbd>Ctrl + L</kbd>
+                                <small class="ms-2">Chat'i temizle</small>
+                            </div>
+                            <div class="mb-2">
+                                <kbd>Esc</kbd>
+                                <small class="ms-2">İptal</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+    <script>
+        // Initialize chat functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeChat();
+        });
+    </script>
+</body>
+</html>

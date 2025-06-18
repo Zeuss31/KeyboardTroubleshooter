@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="tr" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova AI - Advanced Artificial Intelligence</title>
+    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-brain me-2"></i>Nova AI
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/chat">
+                    <i class="fas fa-comments me-1"></i>Chat
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="hero-section text-center mb-5">
+                    <h1 class="display-4 mb-3">
+                        <i class="fas fa-robot text-primary me-3"></i>Nova AI
+                    </h1>
+                    <p class="lead">Gelişmiş Özerk Yapay Zeka Sistemi</p>
+                    <p class="text-muted">Derin düşünce, yaratıcılık ve sürekli öğrenme yetenekleri</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-6 col-lg-3 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-brain fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Bilinç Seviyesi</h5>
+                        <p class="card-text" id="consciousness-level">Yükleniyor...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-lightbulb fa-3x text-warning mb-3"></i>
+                        <h5 class="card-title">Yaratıcılık</h5>
+                        <p class="card-text" id="creativity-index">Yükleniyor...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-heart fa-3x text-danger mb-3"></i>
+                        <h5 class="card-title">Ruh Hali</h5>
+                        <p class="card-text" id="current-mood">Yükleniyor...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-search fa-3x text-info mb-3"></i>
+                        <h5 class="card-title">Merak Seviyesi</h5>
+                        <p class="card-text" id="curiosity-level">Yükleniyor...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-memory me-2"></i>Bellek Durumu
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Episodik Hafıza:</span>
+                            <span id="episodic-count" class="badge bg-primary">0</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Semantik Hafıza:</span>
+                            <span id="semantic-count" class="badge bg-success">0</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Düşünce Zincirleri:</span>
+                            <span id="thoughts-count" class="badge bg-info">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-cogs me-2"></i>Sistem Kontrolü
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="autonomy-level" class="form-label">Otonomi Seviyesi</label>
+                            <input type="range" class="form-range" id="autonomy-level" min="1" max="5" value="3">
+                            <div class="d-flex justify-content-between">
+                                <small>1</small>
+                                <small>5</small>
+                            </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-warning" id="pause-btn">
+                                <i class="fas fa-pause me-2"></i>Duraklat
+                            </button>
+                            <button class="btn btn-success" id="resume-btn">
+                                <i class="fas fa-play me-2"></i>Devam Et
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-stream me-2"></i>Canlı Aktivite
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="activity-log" class="activity-log">
+                            <p class="text-muted">Aktiviteler yükleniyor...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12 text-center">
+                <a href="/chat" class="btn btn-primary btn-lg">
+                    <i class="fas fa-comments me-2"></i>Nova AI ile Konuş
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
